@@ -41,6 +41,7 @@ const static int kMaxEntriesInMostRecentList = 10;
 		_stopPreferences = [[NSMutableDictionary alloc] initWithDictionary:[_preferencesDao readStopPreferences]];
 		_mostRecentLocation = [[_preferencesDao readMostRecentLocation] retain];
 		_visitedSituationIds = [[NSMutableSet alloc] initWithSet:[_preferencesDao readVisistedSituationIds]];
+        _region = [[_preferencesDao readOBARegion] retain];
 	}
 	return self;
 }
@@ -51,6 +52,7 @@ const static int kMaxEntriesInMostRecentList = 10;
 	[_stopPreferences release];
 	[_mostRecentLocation release];
 	[_preferencesDao release];
+    [_region release];
 	[super dealloc];
 }
 
@@ -64,6 +66,15 @@ const static int kMaxEntriesInMostRecentList = 10;
 
 - (CLLocation*) mostRecentLocation {
 	return _mostRecentLocation;
+}
+
+- (OBARegion*) region {
+    return _region;
+}
+
+- (void) setOBARegion:(OBARegion*)newRegion {
+    _region = [NSObject releaseOld:_region retainNew:newRegion];
+    [_preferencesDao writeOBARegion:newRegion];
 }
 
 - (void) setMostRecentLocation:(CLLocation*)location {

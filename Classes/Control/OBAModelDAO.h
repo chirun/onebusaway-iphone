@@ -20,6 +20,7 @@
 #import "OBAStopPreferencesV2.h"
 #import "OBAActivityListeners.h"
 #import "OBAServiceAlertsModel.h"
+#import "OBARegion.h"
 
 
 @class OBAModelDAOUserPreferencesImpl;
@@ -31,11 +32,13 @@
 	NSMutableDictionary * _stopPreferences;
 	CLLocation * _mostRecentLocation;
 	NSMutableSet * _visitedSituationIds;
+    OBARegion * _region;
 }
 
 @property (nonatomic,readonly) NSArray * bookmarks;
 @property (nonatomic,readonly) NSArray * mostRecentStops;
 @property (nonatomic,assign) CLLocation * mostRecentLocation;
+@property (nonatomic,readonly) OBARegion * region;
 
 - (OBABookmarkV2*) createTransientBookmark:(OBAStopV2*)stop;
 

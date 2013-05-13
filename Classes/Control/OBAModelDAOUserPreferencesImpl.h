@@ -16,6 +16,7 @@
 
 //#import <Foundation/Foundation.h>
 
+#import "OBARegion.h"
 
 @interface OBAModelDAOUserPreferencesImpl : NSObject  {
 
@@ -39,7 +40,7 @@
 - (NSSet*) readVisistedSituationIds;
 - (void) writeVisistedSituationIds:(NSSet*)situationIds;
 
-- (NSDictionary*) readOBARegion;
-- (void) writeOBARegion:(NSDictionary*)oBARegion;
+- (OBAregion*) readOBARegion;
+- (void) writeOBARegion:(OBARegion*)oBARegion;
 
 @end
