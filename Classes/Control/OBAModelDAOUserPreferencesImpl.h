@@ -40,7 +40,7 @@
 - (NSSet*) readVisistedSituationIds;
 - (void) writeVisistedSituationIds:(NSSet*)situationIds;
 
-- (OBAregion*) readOBARegion;
+- (OBARegion*) readOBARegion;
 - (void) writeOBARegion:(OBARegion*)oBARegion;
 
 @end

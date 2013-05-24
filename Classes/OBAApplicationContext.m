@@ -40,6 +40,8 @@
 #import "OBAUserPreferencesMigration.h"
 #import "IASKAppSettingsViewController.h"
 
+#import "OBARegionListViewController.h"
+
 
 static NSString * kOBAHiddenPreferenceSavedNavigationTargets = @"OBASavedNavigationTargets";
 static NSString * kOBAHiddenPreferenceApplicationLastActiveTimestamp = @"OBAApplicationLastActiveTimestamp";
@@ -48,6 +50,7 @@ static NSString * kOBAHiddenPreferenceTabOrder = @"OBATabOrder";
 
 static NSString * kOBAPreferenceShowOnStartup = @"oba_show_on_start_preference";
 static NSString * kOBADefaultApiServerName = @"api.onebusaway.org";
+static NSString * kOBADefaultRegionApiServerName = @"regions.onebusaway.org";
 
 static const double kMaxTimeSinceApplicationTerminationToRestoreState = 15 * 60;
 
@@ -166,7 +169,7 @@ static const NSUInteger kTagAgenciesView = 6;
 	NSString * appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 	NSString * obaArgs = [NSString stringWithFormat:@"key=org.onebusaway.iphone&app_uid=%@&app_ver=%@",userId,appVersion];
 	
-	OBADataSourceConfig * obaDataSourceConfig = [[OBADataSourceConfig alloc] initWithUrl:apiServerName args:obaArgs];	
+	OBADataSourceConfig * obaDataSourceConfig = [[OBADataSourceConfig alloc] initWithUrl:apiServerName args:obaArgs];
 	OBAJsonDataSource * obaJsonDataSource = [[OBAJsonDataSource alloc] initWithConfig:obaDataSourceConfig];
 	_modelService.obaJsonDataSource = obaJsonDataSource;
 	[obaJsonDataSource release];
@@ -177,6 +180,19 @@ static const NSUInteger kTagAgenciesView = 6;
 	_modelService.googleMapsJsonDataSource = googleMapsJsonDataSource;
 	[googleMapsJsonDataSource release];
 	[googleMapsDataSourceConfig release];
+    
+    NSString * regionApiServerName = [userDefaults objectForKey:@"oba_region_api_server"];
+    if (regionApiServerName == nil || [regionApiServerName length] == 0) {
+        regionApiServerName = kOBADefaultRegionApiServerName;
+    }
+    
+    regionApiServerName = [NSString stringWithFormat:@"http://%@", regionApiServerName];
+    
+    OBADataSourceConfig * obaRegionDataSourceConfig = [[OBADataSourceConfig alloc] initWithUrl:regionApiServerName args:obaArgs];
+    OBAJsonDataSource * obaRegionJsonDataSource = [[OBAJsonDataSource alloc] initWithConfig:obaRegionDataSourceConfig];
+    _modelService.obaRegionJsonDataSource = obaRegionJsonDataSource;
+    [obaRegionJsonDataSource release];
+    [obaRegionDataSourceConfig release];
 	
 	[userDefaults setObject:appVersion forKey:@"oba_application_version"];
 }
@@ -195,6 +211,10 @@ static const NSUInteger kTagAgenciesView = 6;
 	vc.delegate = self;
 	
 	UIView * rootView = [_tabBarController view];
+    //
+    OBARegionListViewController * regionListViewController = [[OBARegionListViewController alloc] initWithApplicationContext:self];
+    rootView = [regionListViewController view];
+    
 	[_window addSubview:rootView];
 	[_window makeKeyAndVisible];
 	
