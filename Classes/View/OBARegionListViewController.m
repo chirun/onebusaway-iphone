@@ -90,7 +90,9 @@ typedef enum {
 - (void) handleData:(id)obj context:(id)context {
     OBAListWithRangeAndReferencesV2 * list = obj;
 	_regions = [[NSMutableArray alloc] initWithArray:list.values];
-    [self sortRegionsByLocation];
+    NSLog(@"%f %f", _mostRecentLocation.coordinate.latitude, _mostRecentLocation.coordinate.longitude);
+    //[self sortRegionsByLocation];
+    [self sortRegionsByName];
 }
 
 - (void) sortRegionsByLocation {
@@ -114,6 +116,15 @@ typedef enum {
         }];
         [self.tableView reloadData];
     }
+}
+
+- (void) sortRegionsByName {
+    [_regions sortUsingComparator:^(id obj1, id obj2) {
+        OBARegionV2 *region1 = (OBARegionV2*) obj1;
+        OBARegionV2 *region2 = (OBARegionV2*) obj2;
+        
+        return [region1.regionName compare:region2.regionName];
+    }];
 }
 
 - (void) timeOutLocation:(NSTimer*)theTimer {
@@ -168,6 +179,17 @@ typedef enum {
 		default:
 			return 0;
 	}
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    OBASectionType sectionType = [self sectionTypeForSection:section];
+    
+    switch (sectionType) {
+        case OBASectionTypeRegions:
+            return @"Available Regions";
+        default:
+            return @"";
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

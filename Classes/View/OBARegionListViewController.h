@@ -20,6 +20,7 @@
 
 - (id) initWithApplicationContext:(OBAApplicationContext*)appContext;
 - (void) sortRegionsByLocation;
+- (void) sortRegionsByName;
 - (void) timeOutLocation:(NSTimer*)theTimer;
 - (void) showLocationServicesAlert;
 
