@@ -20,7 +20,7 @@
 #import "OBAStopPreferencesV2.h"
 #import "OBAActivityListeners.h"
 #import "OBAServiceAlertsModel.h"
-#import "OBARegion.h"
+#import "OBARegionV2.h"
 
 
 @class OBAModelDAOUserPreferencesImpl;
@@ -32,13 +32,13 @@
 	NSMutableDictionary * _stopPreferences;
 	CLLocation * _mostRecentLocation;
 	NSMutableSet * _visitedSituationIds;
-    OBARegion * _region;
+    OBARegionV2 * _region;
 }
 
 @property (nonatomic,readonly) NSArray * bookmarks;
 @property (nonatomic,readonly) NSArray * mostRecentStops;
 @property (nonatomic,assign) CLLocation * mostRecentLocation;
-@property (nonatomic,readonly) OBARegion * region;
+@property (nonatomic,readonly) OBARegionV2 * region;
 
 - (OBABookmarkV2*) createTransientBookmark:(OBAStopV2*)stop;
 
@@ -56,6 +56,8 @@
 - (void) setVisited:(BOOL)visited forSituationWithId:(NSString*)situationId;
 
 - (OBAServiceAlertsModel*) getServiceAlertsModelForSituations:(NSArray*)situations;
+
+- (void) setOBARegion:(OBARegionV2*)newRegion;
 
 /**
  * We persist hiding location warnings across application settings for users who have disabled location services for the app

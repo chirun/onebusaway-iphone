@@ -9,8 +9,11 @@
 #import "OBAApplicationContext.h"
 #import "OBARequestDrivenTableViewController.h"
 
+@class OBARequestDrivenTableViewController;
+
 @interface OBARegionListViewController : OBARequestDrivenTableViewController<OBALocationManagerDelegate> {
     NSMutableArray * _regions;
+    NSMutableArray * _nearbyRegions;
     
     CLLocation * _mostRecentLocation;
     BOOL _hideFutureNetworkErrors;

@@ -68,11 +68,11 @@ const static int kMaxEntriesInMostRecentList = 10;
 	return _mostRecentLocation;
 }
 
-- (OBARegion*) region {
+- (OBARegionV2*) region {
     return _region;
 }
 
-- (void) setOBARegion:(OBARegion*)newRegion {
+- (void) setOBARegion:(OBARegionV2*)newRegion {
     _region = [NSObject releaseOld:_region retainNew:newRegion];
     [_preferencesDao writeOBARegion:newRegion];
 }

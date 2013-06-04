@@ -22,8 +22,6 @@
 		D4AD7753174DA83600A4F354 /* OBARegionV2.m in Sources */ = {isa = PBXBuildFile; fileRef = D4AD7752174DA83600A4F354 /* OBARegionV2.m */; };
 		D4AD7759174DB2D200A4F354 /* OBARegionBoundsV2.m in Sources */ = {isa = PBXBuildFile; fileRef = D4AD7758174DB2D100A4F354 /* OBARegionBoundsV2.m */; };
 		D4B7158C11F82D3700D0A9CB /* UIDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B7158B11F82D3700D0A9CB /* UIDeviceExtensions.m */; };
-		D4C274B1174016EE00192179 /* OBARegion.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C274B0174016EE00192179 /* OBARegion.m */; };
-		D4C274B417401DC000192179 /* OBARegionBound.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C274B317401DBF00192179 /* OBARegionBound.m */; };
 		D6169A170FC228FB00631BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6169A160FC228FB00631BCE /* CoreData.framework */; };
 		D6169A630FC23FDF00631BCE /* OBABookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = D6169A560FC23FDF00631BCE /* OBABookmark.m */; };
 		D6169A640FC23FDF00631BCE /* OBAStopAccessEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = D6169A580FC23FDF00631BCE /* OBAStopAccessEvent.m */; };
@@ -401,10 +399,6 @@
 		D4AD7758174DB2D100A4F354 /* OBARegionBoundsV2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBARegionBoundsV2.m; sourceTree = "<group>"; };
 		D4B7158A11F82D3700D0A9CB /* UIDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIDeviceExtensions.h; sourceTree = "<group>"; };
 		D4B7158B11F82D3700D0A9CB /* UIDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIDeviceExtensions.m; sourceTree = "<group>"; };
-		D4C274AF174016EE00192179 /* OBARegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OBARegion.h; path = Model/OBARegion.h; sourceTree = "<group>"; };
-		D4C274B0174016EE00192179 /* OBARegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OBARegion.m; path = Model/OBARegion.m; sourceTree = "<group>"; };
-		D4C274B217401DBF00192179 /* OBARegionBound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OBARegionBound.h; path = Model/OBARegionBound.h; sourceTree = "<group>"; };
-		D4C274B317401DBF00192179 /* OBARegionBound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OBARegionBound.m; path = Model/OBARegionBound.m; sourceTree = "<group>"; };
 		D6169A040FC2258800631BCE /* OBAModel-1.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = "OBAModel-1.xcdatamodel"; sourceTree = "<group>"; };
 		D6169A160FC228FB00631BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D6169A550FC23FDF00631BCE /* OBABookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OBABookmark.h; path = Model/OBABookmark.h; sourceTree = "<group>"; };
@@ -1021,10 +1015,6 @@
 				D6169A5C0FC23FDF00631BCE /* OBAAgency.m */,
 				D6169A5D0FC23FDF00631BCE /* OBAStop.h */,
 				D6169A5E0FC23FDF00631BCE /* OBAStop.m */,
-				D4C274AF174016EE00192179 /* OBARegion.h */,
-				D4C274B0174016EE00192179 /* OBARegion.m */,
-				D4C274B217401DBF00192179 /* OBARegionBound.h */,
-				D4C274B317401DBF00192179 /* OBARegionBound.m */,
 				D6169A5F0FC23FDF00631BCE /* OBARoute.h */,
 				D6169A600FC23FDF00631BCE /* OBARoute.m */,
 				D6169ADF0FC2579F00631BCE /* OBAStopPreferences.h */,
@@ -2181,8 +2171,6 @@
 				D69177FE15531D9C00426A70 /* SBJsonTokeniser.m in Sources */,
 				D69177FF15531D9C00426A70 /* SBJsonUTF8Stream.m in Sources */,
 				D691780015531D9C00426A70 /* SBJsonWriter.m in Sources */,
-				D4C274B1174016EE00192179 /* OBARegion.m in Sources */,
-				D4C274B417401DC000192179 /* OBARegionBound.m in Sources */,
 				D40EB85B1743DEF200B28CBB /* OBARegionListViewController.m in Sources */,
 				D4AD7753174DA83600A4F354 /* OBARegionV2.m in Sources */,
 				D4AD7759174DB2D200A4F354 /* OBARegionBoundsV2.m in Sources */,

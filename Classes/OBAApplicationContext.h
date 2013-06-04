@@ -29,6 +29,7 @@
 
 @class OBANearbyTripsController;
 @class OBAStopIconFactory;
+@class OBARegionListViewController;
 
 @interface OBAApplicationContext : NSObject <UIApplicationDelegate,UITabBarControllerDelegate,IASKSettingsDelegate> {
 	
@@ -46,6 +47,8 @@
 	
 	UIWindow * _window;
 	UITabBarController * _tabBarController;
+    
+    OBARegionListViewController *_regionListViewController;
 	
 }
 
@@ -65,5 +68,6 @@
 
 - (void) navigateToTarget:(OBANavigationTarget*)navigationTarget;
 - (void) refreshSettings;
+- (void) regionSelected;
 
 @end

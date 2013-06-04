@@ -11,7 +11,10 @@
 
 typedef enum {
 	OBASectionTypeNone,
-	OBASectionTypeRegions,
+    OBASectionTypeLoading,
+    OBASectionTypeTitle,
+    OBASectionTypeNearbyRegions,
+	OBASectionTypeAllRegions,
 	OBASectionTypeNoRegions,
 } OBASectionType;
 
@@ -19,11 +22,7 @@ typedef enum {
 @interface OBARegionListViewController (Private)
 
 - (OBASectionType) sectionTypeForSection:(NSUInteger)section;
-
 - (UITableViewCell*) regionsCellForRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView*)tableView;
-- (UITableViewCell*) noRegionsCellForRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView*)tableView;
-
-- (void) didSelectActionsRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView;
 - (void) didSelectRegionRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView;
 
 @end
@@ -72,6 +71,7 @@ typedef enum {
 
 - (void)dealloc {
 	[_regions release];
+    [_nearbyRegions release];
     [_mostRecentLocation release];
     if (_locationTimer != nil) {
         [_locationTimer release];
@@ -97,7 +97,20 @@ typedef enum {
 
 - (void) sortRegionsByLocation {
     if (![self isLoading]) {
-        [_regions sortUsingComparator:^(id obj1, id obj2) {
+        _nearbyRegions = [[NSMutableArray arrayWithArray:_regions] retain];
+        NSMutableArray *regionsToRemove = [[NSMutableArray array] retain];
+        for (id obj in _nearbyRegions) {
+            OBARegionV2 *region = (OBARegionV2 *) obj;
+            CLLocationDistance distance = [region distanceFromLocation:_mostRecentLocation];
+            if (distance > 160934) { // 100 miles
+                [regionsToRemove addObject:obj];
+            }
+        }
+        
+        [_nearbyRegions removeObjectsInArray:regionsToRemove];
+        [regionsToRemove release];
+        
+        [_nearbyRegions sortUsingComparator:^(id obj1, id obj2) {
             OBARegionV2 *region1 = (OBARegionV2*) obj1;
             OBARegionV2 *region2 = (OBARegionV2*) obj2;
             
@@ -129,6 +142,7 @@ typedef enum {
 
 - (void) timeOutLocation:(NSTimer*)theTimer {
     _locationTimedOut = TRUE;
+    
     [self sortRegionsByLocation];
 }
 
@@ -155,13 +169,14 @@ typedef enum {
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	
-	if( [self isLoading] )
-		return [super numberOfSectionsInTableView:tableView];
-    
-	if ([_regions count] == 0)
-		return 1;
-	else
-		return 2;
+    if (_regions == nil)
+        return 1;
+    else if ([_regions count] == 0)
+        return 1;
+	else if( _nearbyRegions == nil || [_nearbyRegions count] == 0 )
+        return 2;
+    else
+        return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -172,10 +187,10 @@ typedef enum {
 	OBASectionType sectionType = [self sectionTypeForSection:section];
 	
 	switch( sectionType ) {
-		case OBASectionTypeRegions:
+		case OBASectionTypeAllRegions:
 			return [_regions count];
-		case OBASectionTypeNoRegions:
-			return 1;
+        case OBASectionTypeNearbyRegions:
+            return [_nearbyRegions count];
 		default:
 			return 0;
 	}
@@ -185,8 +200,16 @@ typedef enum {
     OBASectionType sectionType = [self sectionTypeForSection:section];
     
     switch (sectionType) {
-        case OBASectionTypeRegions:
+        case OBASectionTypeLoading:
+            return @"Loading available regions...";
+        case OBASectionTypeTitle:
+            return @"Select the region where you wish to use OneBusAway";
+        case OBASectionTypeNearbyRegions:
+            return @"Nearby Regions";
+        case OBASectionTypeAllRegions:
             return @"Available Regions";
+        case OBASectionTypeNoRegions:
+            return @"No regions found";
         default:
             return @"";
     }
@@ -200,10 +223,10 @@ typedef enum {
 	OBASectionType sectionType = [self sectionTypeForSection:indexPath.section];
 	
 	switch (sectionType) {
-		case OBASectionTypeRegions:
+		case OBASectionTypeAllRegions:
 			return [self regionsCellForRowAtIndexPath:indexPath tableView:tableView];
-		case OBASectionTypeNoRegions:
-			return [self noRegionsCellForRowAtIndexPath:indexPath tableView:tableView];
+        case OBASectionTypeNearbyRegions:
+            return [self regionsCellForRowAtIndexPath:indexPath tableView:tableView];
 		default:
 			break;
 	}
@@ -222,10 +245,12 @@ typedef enum {
 	OBASectionType sectionType = [self sectionTypeForSection:indexPath.section];
 	
 	switch (sectionType) {
-		case OBASectionTypeRegions:
+		case OBASectionTypeAllRegions:
 			[self didSelectRegionRowAtIndexPath:indexPath tableView:tableView];
 			break;
-			
+        case OBASectionTypeNearbyRegions:
+            [self didSelectRegionRowAtIndexPath:indexPath tableView:tableView];
+            break;
 		default:
 			break;
 	}
@@ -258,21 +283,46 @@ typedef enum {
 
 - (OBASectionType) sectionTypeForSection:(NSUInteger)section {
 	
-	if( [_regions count] == 0 ) {
+    if (_regions == nil) {
+        if (section == 0)
+            return OBASectionTypeLoading;
+    }
+	else if( [_regions count] == 0 ) {
 		if( section == 0 )
 			return OBASectionTypeNoRegions;
 	}
 	else {
 		if( section == 0 )
-			return OBASectionTypeRegions;
+            return OBASectionTypeTitle;
+        else if (_nearbyRegions == nil || [_nearbyRegions count] == 0) {
+            if (section == 1)
+                return OBASectionTypeAllRegions;
+        }
+        else {
+            if (section == 1)
+                return OBASectionTypeNearbyRegions;
+            else if (section == 2)
+                return OBASectionTypeAllRegions;
+        }
 	}
 	
 	return OBASectionTypeNone;
 }
 
 - (UITableViewCell*) regionsCellForRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView*)tableView {
+    OBARegionV2 *region = nil;
     
-	OBARegionV2 * region = [_regions objectAtIndex:indexPath.row];
+    switch ([self sectionTypeForSection:indexPath.section]) {
+        case OBASectionTypeNearbyRegions:
+            region = [_nearbyRegions objectAtIndex:indexPath.row];
+            break;
+        case OBASectionTypeAllRegions:
+            region = [_regions objectAtIndex:indexPath.row];
+            break;
+        default:
+            return nil;
+            break;
+    }
 	
 	UITableViewCell * cell = [UITableViewCell getOrCreateCellForTableView:tableView];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -283,23 +333,23 @@ typedef enum {
 	return cell;
 }
 
-- (UITableViewCell*) noRegionsCellForRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView*)tableView {
-	UITableViewCell * cell = [UITableViewCell getOrCreateCellForTableView:tableView];
-	cell.accessoryType = UITableViewCellAccessoryNone;
-	cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	cell.textLabel.textColor = [UIColor blackColor];
-	cell.textLabel.textAlignment = UITextAlignmentCenter;
-	cell.textLabel.text = NSLocalizedString(@"No regions found",@"cell.textLabel.text");
-	return cell;
-}
-
-- (void) didSelectActionsRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-	//OBANavigationTarget * target = [OBASearch getNavigationTargetForSearchAgenciesWithCoverage];
-	//[_appContext navigateToTarget:target];
-}
-
 - (void) didSelectRegionRowAtIndexPath:(NSIndexPath *)indexPath tableView:(UITableView *)tableView {
-	OBARegionV2 * region = [_regions objectAtIndex:indexPath.row];
+	OBARegionV2 * region = nil;
+    
+    switch ([self sectionTypeForSection:indexPath.section]) {
+        case OBASectionTypeNearbyRegions:
+            region = [_nearbyRegions objectAtIndex:indexPath.row];
+            break;
+        case OBASectionTypeAllRegions:
+            region = [_regions objectAtIndex:indexPath.row];
+            break;
+        default:
+            return ;
+            break;
+    }
+    
+    [_appContext.modelDao setOBARegion:region];
+    [_appContext regionSelected];
 	//[[UIApplication sharedApplication] openURL: [NSURL URLWithString: agency.url]];
 }
 

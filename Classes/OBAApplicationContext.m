@@ -144,6 +144,10 @@ static const NSUInteger kTagAgenciesView = 6;
 	[_activityListeners release];
 	
 	[_stopIconFactory release];
+    
+    if (_regionListViewController != nil) {
+        [_regionListViewController release];
+    }
 	
 	[_window release];
 	[_tabBarController release];
@@ -160,10 +164,18 @@ static const NSUInteger kTagAgenciesView = 6;
 	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
 									
 	NSString * apiServerName = [userDefaults objectForKey:@"oba_api_server"];
-	if( apiServerName == nil || [apiServerName length] == 0 )
-		apiServerName = kOBADefaultApiServerName;
-	
-	apiServerName = [NSString stringWithFormat:@"http://%@",apiServerName];
+	if( apiServerName == nil || [apiServerName length] == 0 ) {
+        if (_modelDao.region != nil) {
+            apiServerName = [NSString stringWithFormat:@"%@", _modelDao.region.obaBaseUrl];
+            // remove the last '/'
+            apiServerName = [apiServerName substringToIndex:[apiServerName length]-1];
+        }
+        else {
+            apiServerName = kOBADefaultApiServerName;
+            apiServerName = [NSString stringWithFormat:@"http://%@",apiServerName];
+        }
+        
+    }
 	
 	NSString * userId = [self userIdFromDefaults:userDefaults];
 	NSString * appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -211,14 +223,29 @@ static const NSUInteger kTagAgenciesView = 6;
 	vc.delegate = self;
 	
 	UIView * rootView = [_tabBarController view];
-    //
-    OBARegionListViewController * regionListViewController = [[OBARegionListViewController alloc] initWithApplicationContext:self];
-    rootView = [regionListViewController view];
+    
+    if (_modelDao.region == nil) {
+        _regionListViewController = [[OBARegionListViewController alloc] initWithApplicationContext:self];
+        rootView = [_regionListViewController view];
+    }
+    
     
 	[_window addSubview:rootView];
 	[_window makeKeyAndVisible];
 	
 	[self restoreState];
+}
+
+- (void)regionSelected {
+    [_regionListViewController.view removeFromSuperview];
+    [_regionListViewController release];
+    _regionListViewController = nil;
+    
+    [self refreshSettings];
+    
+    UIView * rootView = [_tabBarController view];
+    [_window addSubview:rootView];
+    [_window makeKeyAndVisible];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
