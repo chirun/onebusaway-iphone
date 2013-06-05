@@ -90,7 +90,17 @@ typedef enum {
 - (void) handleData:(id)obj context:(id)context {
     OBAListWithRangeAndReferencesV2 * list = obj;
 	_regions = [[NSMutableArray alloc] initWithArray:list.values];
-    NSLog(@"%f %f", _mostRecentLocation.coordinate.latitude, _mostRecentLocation.coordinate.longitude);
+    
+    NSMutableArray *notSupportedRegions = [[NSMutableArray array] retain];
+    for (id obj in _regions) {
+        OBARegionV2 *region = (OBARegionV2 *)obj;
+        if (!region.supportsObaRealtimeApis) {
+            [notSupportedRegions addObject:region];
+        }
+    }
+    [_regions removeObjectsInArray:notSupportedRegions];
+    [notSupportedRegions release];
+    //NSLog(@"%f %f", _mostRecentLocation.coordinate.latitude, _mostRecentLocation.coordinate.longitude);
     //[self sortRegionsByLocation];
     [self sortRegionsByName];
 }
